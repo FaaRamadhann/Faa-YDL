@@ -1,0 +1,6 @@
+id=faadl
+name=Faa YTDownloader (FYDL)
+version=1.0.9
+versionCode=10
+author=Faa Ramadhan
+description=Download audio/video YouTube langsung ke /sdcard/Download/FaaDL. Termasuk ffmpeg, python, yt-dlp system-wide + aplikasi manager FYDL (otomatis terinstall).

@@ -1,0 +1,32 @@
+# Binaries & hasil build (diregenerasi, jangan commit)
+bins/
+build/
+build-*/
+*.apk
+*.idsig
+*.keystore
+
+# Dependencies & cache
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+
+# Artefak compile
+*.class
+*.dex
+*.jar
+
+# Hasil download lokal (foldernya ikut via .gitkeep)
+downloads/*
+!downloads/.gitkeep
+
+# Payload & staging modul (diregenerasi via prepare_payload.py)
+FaaDL-Module/system/
+FaaDL-Module/payload/
+FaaDL-Module/manager.apk
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log

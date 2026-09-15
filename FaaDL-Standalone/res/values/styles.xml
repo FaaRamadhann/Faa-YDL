@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.FaaDL" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:colorPrimary">@color/faa_primary</item>
+        <item name="android:colorPrimaryDark">@color/faa_primary_dark</item>
+        <item name="android:colorAccent">@color/faa_accent</item>
+        <item name="android:windowBackground">@color/faa_bg_top</item>
+        <item name="android:textColorPrimary">@color/faa_text</item>
+    </style>
+</resources>
