@@ -1,7 +1,7 @@
 {
-  "name": "ytdl-webui",
-  "version": "1.0.3",
-  "description": "YouTube Downloader with Web UI - supports QR scan & manual input",
+  "name": "faa-ytdownloader",
+  "version": "1.0.0",
+  "description": "Faa YTDownloader - YouTube Downloader with Web UI",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
