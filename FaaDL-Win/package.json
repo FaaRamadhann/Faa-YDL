@@ -1,0 +1,15 @@
+{
+  "name": "faa-ytdownloader-win",
+  "version": "1.0.0",
+  "description": "Faa YTDownloader - YouTube Downloader with Web UI (Windows/Linux)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "node-forge": "^1.4.0",
+    "selfsigned": "^5.5.0",
+    "socket.io": "^4.7.5"
+  }
+}

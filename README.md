@@ -8,6 +8,7 @@ Tiga varian, satu repo:
 | Folder | Untuk siapa | Butuh root? |
 |---|---|---|
 | `FaaDL-termux/` | Versi pertama (Web UI, jalan di Termux) | Tidak |
+| `FaaDL-Win/` | Versi Windows/Linux (Web UI, jalan di PC) | Tidak |
 | `FaaDL-Standalone/` | APK langsung install (64-bit / 32-bit / universal) | Tidak (opsional, buat superpower) |
 | `FaaDL-Module/` | Modul Magisk/KernelSU/APatch + aplikasi FYDL + CLI `fdl` | **Ya** |
 
@@ -39,6 +40,16 @@ Buka di browser HP: `http://localhost:2080` (atau URL HTTPS di log untuk scan QR
 dari kamera). Hasil: `/sdcard/Download/FaaDL/`.
 
 > Syarat lengkap + troubleshooting: [`FaaDL-termux/REQUIREMENTS.md`](FaaDL-termux/REQUIREMENTS.md).
+
+## 1b. FaaDL-Win (Windows / Linux)
+
+Sama kayak versi Termux tapi jalan di PC. Hasil:
+`%USERPROFILE%\Downloads\FaaDL` (Windows) atau `~/Downloads/FaaDL` (Linux).
+
+Syarat: Node.js LTS + `yt-dlp` + `ffmpeg` (semuanya kebaca dari PATH).
+Klik 2x `FaaDL-Win/start.bat`, atau manual `npm install` lalu `node server.js`.
+
+> Syarat lengkap + troubleshooting: [`FaaDL-Win/REQUIREMENTS.md`](FaaDL-Win/REQUIREMENTS.md).
 
 ## 2. FaaDL-Standalone (APK non-module)
 

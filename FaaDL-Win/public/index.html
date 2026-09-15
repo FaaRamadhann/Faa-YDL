@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Faa YTDownloader</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Faa YTDownloader</h1>
+      <p class="subtitle">Download audio/video dari YouTube</p>
+    </header>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="manual">Manual</button>
+      <button class="tab-btn" data-tab="qr">Scan QR</button>
+      <button class="tab-btn" data-tab="history">History</button>
+    </div>
+
+    <div id="tab-manual" class="tab-content active">
+      <div class="input-group">
+        <label for="url-input">URL YouTube</label>
+        <input type="url" id="url-input" placeholder="https://youtube.com/watch?v=..." autofocus>
+      </div>
+      <div class="input-group">
+        <label for="format-select">Format</label>
+        <select id="format-select">
+          <option value="mp3">MP3 (Audio)</option>
+          <option value="video">Video (MP4)</option>
+        </select>
+      </div>
+      <button id="btn-download" class="btn-primary">
+        <span class="icon">⬇</span> Download
+      </button>
+    </div>
+
+    <div id="tab-qr" class="tab-content">
+      <div class="qr-container">
+        <div id="https-info" class="https-info hidden">
+          <p>Akses via HTTPS untuk kamera:</p>
+          <code id="https-url"></code>
+          <button id="btn-copy-url" class="btn-small">Salin URL</button>
+        </div>
+
+        <div class="camera-help">
+          <p class="help-title">Kamera gak bisa?</p>
+          <ol class="help-steps">
+            <li>Buka Chrome → ketik <code>chrome://flags</code> di address bar</li>
+            <li>Cari <strong>"Insecure origins treated as secure"</strong></li>
+            <li>Masukkan IP:port ini, set ke <strong>Enabled</strong>, restart Chrome</li>
+            <li>Atau scan QR dari gambar (upload foto) di bawah</li>
+          </ol>
+        </div>
+
+        <button id="btn-permit-camera" class="btn-outline">
+          <span class="icon">📷</span> Minta Izin Kamera
+        </button>
+
+        <div id="qr-reader"></div>
+        <div id="qr-camera-error" class="camera-error hidden">
+          <p>Kamera tidak bisa diakses.</p>
+          <p class="camera-error-hint">Gunakan scan dari gambar atau input manual di bawah.</p>
+        </div>
+
+        <div class="divider"><span>atau</span></div>
+
+        <div class="input-group">
+          <label for="qr-image-input">Scan QR dari gambar (upload foto)</label>
+          <input type="file" id="qr-image-input" accept="image/*" capture="environment">
+        </div>
+
+        <canvas id="qr-canvas" style="display:none"></canvas>
+
+        <div class="input-group">
+          <label for="qr-url-input">Atau masukkan URL manual</label>
+          <input type="url" id="qr-url-input" placeholder="https://youtube.com/watch?v=...">
+        </div>
+        <div id="qr-result" class="qr-result hidden">
+          <p>URL terdeteksi:</p>
+          <code id="qr-url"></code>
+        </div>
+        <div class="input-group">
+          <label for="qr-format">Format</label>
+          <select id="qr-format">
+            <option value="mp3">MP3 (Audio)</option>
+            <option value="video">Video (MP4)</option>
+          </select>
+        </div>
+        <button id="btn-qr-download" class="btn-primary">
+          <span class="icon">⬇</span> Download
+        </button>
+      </div>
+    </div>
+
+    <div id="tab-history" class="tab-content">
+      <div id="history-header">
+        <span>File terunduh</span>
+        <button id="btn-clear-history">Hapus semua</button>
+      </div>
+      <div id="history-list">
+        <p class="empty-msg">Belum ada file yang diunduh.</p>
+      </div>
+    </div>
+
+    <div id="progress-area" class="hidden">
+      <div class="progress-header">
+        <span id="status-text">Memproses...</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div id="progress-fill"></div>
+      </div>
+    </div>
+
+    <div id="log-header">
+      <span>Log</span>
+      <button id="btn-clear-log">Hapus</button>
+    </div>
+    <div id="log-area"></div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

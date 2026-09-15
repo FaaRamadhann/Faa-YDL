@@ -49,7 +49,29 @@ Buka `http://localhost:2080` di browser HP yang sama, atau URL
 `http://<IP-HP>:2080` dari perangkat lain. Untuk scan QR kamera pakai
 URL HTTPS (`https://<IP-HP>:2081`) lalu Proceed unsafe di browser.
 
-## 5. Troubleshooting
+## 5. Alias `fydl` (biar cepat)
+
+Supaya bisa jalanin server dari mana saja cukup ketik `fydl`,
+tambahkan alias ke `~/.bashrc` (sekali saja):
+
+```bash
+echo "alias fydl='cd ~/Faa-YDL/FaaDL-termux && node server.js'" >> ~/.bashrc
+source ~/.bashrc
+```
+
+> Sesuaikan path-nya kalau clone di lokasi lain. Mau lebih sakti, pakai
+> function biar bisa `fydl stop` juga:
+>
+> ```bash
+> fydl() {
+>   case "$1" in
+>     stop) pkill -f "node server.js" && echo "server berhenti" ;;
+>     *) cd ~/Faa-YDL/FaaDL-termux && node server.js ;;
+>   esac
+> }
+> ```
+
+## 6. Troubleshooting
 
 | Gejala | Solusi |
 |---|---|
@@ -60,6 +82,6 @@ URL HTTPS (`https://<IP-HP>:2081`) lalu Proceed unsafe di browser.
 | Download gagal semua | Update dulu: `pip install -U yt-dlp` (YouTube sering berubah) |
 | `npm install` lambat/gagal | Ganti registry / pakai WiFi stabil, ulangi |
 
-## Yang TIDAK dibutuhkan
+## 7. Yang TIDAK dibutuhkan
 
 - Root, Magisk, APK lain, laptop/PC (opsional, cuma buat buka UI).
