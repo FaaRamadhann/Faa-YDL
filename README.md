@@ -1,6 +1,14 @@
 # FaaDL — Faa YTDownloader
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Android](https://img.shields.io/badge/Android-7.0%2B-3DDC84?logo=android&logoColor=white)](FaaDL-Standalone/REQUIREMENTS.md)
+[![Root](https://img.shields.io/badge/Root-Magisk%20%7C%20KernelSU%20%7C%20APatch-red)](FaaDL-Module/)
+[![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white)](FaaDL-Module/)
+[![yt-dlp](https://img.shields.io/github/v/release/yt-dlp/yt-dlp?label=yt-dlp&color=FF0000)](https://github.com/yt-dlp/yt-dlp)
+[![FFmpeg](https://img.shields.io/badge/FFmpeg-8.1-007808?logo=ffmpeg&logoColor=white)](FaaDL-Module/)
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white)](FaaDL-termux/REQUIREMENTS.md)
+[![Build](https://img.shields.io/badge/Build-JDK%2BSDK_(no_Gradle)-blue)](FaaDL-Standalone/REQUIREMENTS.md)
+[![Termux](https://img.shields.io/badge/Termux-F--Droid-000000?logo=android&logoColor=white)](FaaDL-termux/REQUIREMENTS.md)
 
 Download audio (MP3) / video (MP4) dari YouTube, plus scan QR. Hasil selalu ke
 `/sdcard/Download/FaaDL/` layaknya hasil download biasa.
