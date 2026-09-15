@@ -1,5 +1,7 @@
 # FaaDL — Faa YTDownloader
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Download audio (MP3) / video (MP4) dari YouTube, plus scan QR. Hasil selalu ke
 `/sdcard/Download/FaaDL/` layaknya hasil download biasa.
 
@@ -104,4 +106,4 @@ Cara pakai:
 
 ## Lisensi
 
-MIT — lihat `LICENSE`.
+[MIT](LICENSE) — © 2026 Faa Ramadhan.
