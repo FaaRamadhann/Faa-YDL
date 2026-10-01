@@ -25,10 +25,24 @@ yt-dlp --version
 ffmpeg -version
 ```
 
-## 3. Jalanin
+## 3. Install sekali (Windows) — biar bisa ketik `fydl` di mana saja
 
-Windows — klik 2x `start.bat` (otomatis `npm install` + buka browser),
-atau manual:
+Klik kanan `install.bat` → **Run as administrator** (atau klik 2x, nanti
+minta admin sendiri). Script ini daftarkan folder FaaDL-Win ke **system
+PATH**, cek node, dan jalankan `npm install`.
+
+Sesudah itu tutup cmd lama, buka cmd **baru**, lalu:
+
+```bat
+fydl                :: jalankan server Web UI (buka browser otomatis)
+fydl mp3 URL        :: download MP3 ke Downloads\FaaDL
+fydl mp4 URL        :: download MP4 ke Downloads\FaaDL
+fydl --test [URL]   :: cek node, yt-dlp, ffmpeg (+ judul video)
+```
+
+Hapus dari PATH: klik kanan `uninstall.bat` → Run as administrator.
+
+## 4. Jalanin manual (tanpa install)
 
 ```bat
 cd FaaDL-Win
@@ -46,7 +60,7 @@ node server.js
 
 Buka `http://localhost:2080`. Hasil MP3/MP4 masuk folder Downloads\FaaDL.
 
-## 4. Troubleshooting
+## 5. Troubleshooting
 
 | Gejala | Solusi |
 |---|---|

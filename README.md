@@ -57,7 +57,9 @@ Sama kayak versi Termux tapi jalan di PC. Hasil:
 `%USERPROFILE%\Downloads\FaaDL` (Windows) atau `~/Downloads/FaaDL` (Linux).
 
 Syarat: Node.js LTS + `yt-dlp` + `ffmpeg` (semuanya kebaca dari PATH).
-Klik 2x `FaaDL-Win/start.bat`, atau manual `npm install` lalu `node server.js`.
+Klik 2x `FaaDL-Win/start.bat`, atau install permanen: klik kanan
+`FaaDL-Win/install.bat` → Run as administrator, lalu ketik `fydl` di cmd
+mana saja (`fydl mp3 URL`, `fydl mp4 URL`, `fydl --test`).
 
 > Syarat lengkap + troubleshooting: [`FaaDL-Win/REQUIREMENTS.md`](FaaDL-Win/REQUIREMENTS.md).
 
