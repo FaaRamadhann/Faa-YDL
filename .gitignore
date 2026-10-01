@@ -2,9 +2,11 @@
 bins/
 build/
 build-*/
+release/
 *.apk
 *.idsig
 *.keystore
+*.zip
 
 # Dependencies & cache
 node_modules/
