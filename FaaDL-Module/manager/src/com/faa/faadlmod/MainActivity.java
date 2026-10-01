@@ -186,7 +186,7 @@ public class MainActivity extends Activity {
         pageHistory.setOrientation(LinearLayout.VERTICAL);
         pageHistory.setVisibility(View.GONE);
         TextView hTitle = new TextView(this);
-        hTitle.setText("File terunduh  (/sdcard/Download/FaaDL)");
+        hTitle.setText("Riwayat download  (/sdcard/Download/FaaDL)");
         hTitle.setTextSize(13);
         hTitle.setTypeface(Typeface.DEFAULT_BOLD);
         hTitle.setTextColor(Color.parseColor("#475569"));
@@ -197,7 +197,7 @@ public class MainActivity extends Activity {
         historyView.setBackground(cardBg());
         historyView.setPadding(dp(12), dp(12), dp(12), dp(12));
         pageHistory.addView(historyView, lp(-1, -2));
-        Button btnClear = outlineBtn("Hapus semua");
+        Button btnClear = outlineBtn("Hapus riwayat");
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) { clearHistory(); }
         });
@@ -1035,6 +1035,9 @@ public class MainActivity extends Activity {
                         btnDownload.setEnabled(true);
                         btnQrDownload.setEnabled(true);
                         if (fok) {
+                            String hName = lastResult != null ? lastResult.getName() : null;
+                            long hSize = 0;
+                            try { if (lastResult != null && lastResult.exists()) hSize = lastResult.length(); } catch (Exception ignored) {}
                             String where = outDir.getAbsolutePath();
                             if (!legacyDlOk && lastResult != null && lastResult.exists()) {
                                 try {
@@ -1053,6 +1056,7 @@ public class MainActivity extends Activity {
                             try {
                                 MediaScan.scanFileHack(MainActivity.this, outDir);
                             } catch (Exception ignored) {}
+                            if (hName != null) addHistEntry(hName, hSize);
                             refreshHistory();
                             showTab(2);
                         } else {
@@ -1174,69 +1178,75 @@ public class MainActivity extends Activity {
         return s.substring(0, n);
     }
 
-    // ---------- history (/sdcard/Download/FaaDL) ----------
+    // ---------- history: log riwayat (terpisah dari file asli) ----------
+    // Tombol "Hapus riwayat" HANYA menghapus log ini. File hasil download
+    // di /sdcard/Download/FaaDL TIDAK ikut dihapus.
+    private static final String HIST_PREF = "fydl_history";
+    private static final String HIST_KEY = "entries";
+    private static final int HIST_MAX = 100;
+
     private static class HistRow {
         String name; long size; long time;
         HistRow(String n, long s, long t) { name = n; size = s; time = t; }
     }
 
+    private ArrayList<HistRow> loadHistLog() {
+        ArrayList<HistRow> rows = new ArrayList<HistRow>();
+        try {
+            String json = getSharedPreferences(HIST_PREF, MODE_PRIVATE).getString(HIST_KEY, "[]");
+            org.json.JSONArray arr = new org.json.JSONArray(json);
+            for (int i = 0; i < arr.length(); i++) {
+                org.json.JSONObject o = arr.optJSONObject(i);
+                if (o == null) continue;
+                rows.add(new HistRow(o.optString("name", "?"), o.optLong("size", 0), o.optLong("time", 0)));
+            }
+        } catch (Exception e) {
+            android.util.Log.d("FaaDL", "hist load " + e.getMessage());
+        }
+        return rows;
+    }
+
+    private void saveHistLog(ArrayList<HistRow> rows) {
+        try {
+            org.json.JSONArray arr = new org.json.JSONArray();
+            for (int i = 0; i < rows.size() && i < HIST_MAX; i++) {
+                HistRow r = rows.get(i);
+                org.json.JSONObject o = new org.json.JSONObject();
+                o.put("name", r.name);
+                o.put("size", r.size);
+                o.put("time", r.time);
+                arr.put(o);
+            }
+            getSharedPreferences(HIST_PREF, MODE_PRIVATE).edit().putString(HIST_KEY, arr.toString()).apply();
+        } catch (Exception e) {
+            android.util.Log.d("FaaDL", "hist save " + e.getMessage());
+        }
+    }
+
+    private void addHistEntry(String name, long size) {
+        try {
+            ArrayList<HistRow> rows = loadHistLog();
+            rows.add(0, new HistRow(name, size, System.currentTimeMillis()));
+            saveHistLog(rows);
+        } catch (Exception e) {
+            android.util.Log.d("FaaDL", "hist add " + e.getMessage());
+        }
+    }
+
     private void refreshHistory() {
         try {
-            ArrayList<HistRow> rows = new ArrayList<HistRow>();
-            // 1) folder legacy (HP lama / bisa tulis langsung)
-            try {
-                File d = getLegacyDir();
-                File[] fs = d.listFiles();
-                if (fs != null) {
-                    for (int i = 0; i < fs.length; i++) {
-                        if (fs[i].isFile() && !fs[i].getName().startsWith("."))
-                            rows.add(new HistRow(fs[i].getName(), fs[i].length(),
-                                    fs[i].lastModified()));
-                    }
-                }
-            } catch (Exception ignored) {}
-            // 2) MediaStore (HP baru: hasil publish)
-            if (Build.VERSION.SDK_INT >= 29) {
-                try {
-                    android.database.Cursor c = getContentResolver().query(
-                            android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI,
-                            new String[]{
-                                    android.provider.MediaStore.Downloads.DISPLAY_NAME,
-                                    android.provider.MediaStore.Downloads.SIZE,
-                                    android.provider.MediaStore.Downloads.DATE_MODIFIED},
-                            android.provider.MediaStore.Downloads.RELATIVE_PATH + "=?",
-                            new String[]{"Download/FaaDL/"}, null);
-                    if (c != null) {
-                        while (c.moveToNext()) {
-                            String nm = c.getString(0);
-                            long sz = 0;
-                            long dt = 0;
-                            try { sz = c.getLong(1); } catch (Exception ignored) {}
-                            try { dt = c.getLong(2) * 1000; } catch (Exception ignored) {}
-                            rows.add(new HistRow(nm, sz, dt));
-                        }
-                        c.close();
-                    }
-                } catch (Exception e) {
-                    android.util.Log.d("FaaDL", "hist query " + e.getMessage());
-                }
-            }
+            ArrayList<HistRow> rows = loadHistLog();
             if (rows.isEmpty()) {
-                historyView.setText("Belum ada file.\nFolder: /sdcard/Download/FaaDL");
+                historyView.setText("Belum ada riwayat.\nFile tersimpan di /sdcard/Download/FaaDL");
                 return;
             }
-            Collections.sort(rows, new Comparator<HistRow>() {
-                @Override public int compare(HistRow a, HistRow b) {
-                    return Long.compare(b.time, a.time);
-                }
-            });
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < rows.size() && i < 30; i++) {
                 HistRow r = rows.get(i);
                 sb.append("• ").append(r.name)
                   .append("  (").append(human(r.size)).append(")\n");
             }
-            sb.append("\nFolder: /sdcard/Download/FaaDL");
+            sb.append("\nFile tersimpan di: /sdcard/Download/FaaDL");
             historyView.setText(sb.toString());
         } catch (Exception e) {
             historyView.setText("Gagal baca history: " + e.getMessage());
@@ -1251,26 +1261,8 @@ public class MainActivity extends Activity {
 
     private void clearHistory() {
         try {
-            int n = 0;
-            try {
-                File[] fs = getLegacyDir().listFiles();
-                if (fs != null) {
-                    for (int i = 0; i < fs.length; i++) {
-                        if (fs[i].isFile() && fs[i].delete()) n++;
-                    }
-                }
-            } catch (Exception ignored) {}
-            if (Build.VERSION.SDK_INT >= 29) {
-                try {
-                    n += getContentResolver().delete(
-                            android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI,
-                            android.provider.MediaStore.Downloads.RELATIVE_PATH + "=?",
-                            new String[]{"Download/FaaDL/"});
-                } catch (Exception e) {
-                    android.util.Log.d("FaaDL", "hist del " + e.getMessage());
-                }
-            }
-            toast("Dihapus " + n + " file");
+            saveHistLog(new ArrayList<HistRow>());
+            toast("Riwayat dibersihkan (file tetap tersimpan)");
             refreshHistory();
         } catch (Exception e) {
             toast("Gagal hapus: " + e.getMessage());

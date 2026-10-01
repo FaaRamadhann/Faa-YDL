@@ -1,6 +1,6 @@
 {
   "name": "faa-ytdownloader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Faa YTDownloader - YouTube Downloader with Web UI",
   "main": "server.js",
   "scripts": {

@@ -29,39 +29,37 @@ if (!fs.existsSync(DOWNLOAD_DIR)) {
   fs.mkdirSync(DOWNLOAD_DIR, { recursive: true });
 }
 
+// Riwayat download: log terpisah di history.json. Tombol "Hapus riwayat"
+// HANYA menghapus log ini, file asli di folder download TIDAK dihapus.
+const HISTORY_FILE = path.join(__dirname, 'history.json');
+const HIST_MAX = 100;
+function loadHistory() {
+  try {
+    const raw = fs.readFileSync(HISTORY_FILE, 'utf8');
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch { return []; }
+}
+function saveHistory(list) {
+  try { fs.writeFileSync(HISTORY_FILE, JSON.stringify(list.slice(0, HIST_MAX))); } catch {}
+}
+function addHistoryEntry(entry) {
+  const list = loadHistory();
+  list.unshift({ name: entry.name, size: entry.size || 0, time: Date.now() });
+  saveHistory(list);
+}
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 app.get('/api/downloads', (req, res) => {
-  fs.readdir(DOWNLOAD_DIR, (err, files) => {
-    if (err) return res.json({ files: [] });
-    const fileList = files
-      .filter(f => !f.startsWith('.') && fs.statSync(path.join(DOWNLOAD_DIR, f)).isFile())
-      .map(f => ({
-        name: f,
-        size: fs.statSync(path.join(DOWNLOAD_DIR, f)).size,
-        time: fs.statSync(path.join(DOWNLOAD_DIR, f)).mtime
-      }))
-      .sort((a, b) => b.time - a.time);
-    res.json({ files: fileList });
-  });
+  res.json({ files: loadHistory().slice(0, 30) });
 });
 
 app.post('/api/clear-history', (req, res) => {
-  fs.readdir(DOWNLOAD_DIR, (err, files) => {
-    if (err) return res.json({ ok: false });
-    let deleted = 0;
-    files.forEach(f => {
-      const fp = path.join(DOWNLOAD_DIR, f);
-      try {
-        if (fs.statSync(fp).isFile()) {
-          fs.unlinkSync(fp);
-          deleted++;
-        }
-      } catch {}
-    });
-    res.json({ ok: true, deleted });
-  });
+  const n = loadHistory().length;
+  saveHistory([]);
+  res.json({ ok: true, deleted: n, cleared: n });
 });
 
 app.get('/api/info', (req, res) => {
@@ -114,6 +112,9 @@ function createServer(protocol) {
 
       socket.emit('status', { message: 'Memproses URL...', type: 'info' });
 
+      let beforeDl = new Set();
+      try { fs.readdirSync(DOWNLOAD_DIR).forEach(f => beforeDl.add(f)); } catch {}
+
       const proc = spawn('yt-dlp', args, { cwd: DOWNLOAD_DIR });
 
       proc.stdout.on('data', (data) => {
@@ -140,6 +141,17 @@ function createServer(protocol) {
 
       proc.on('close', (code) => {
         if (code === 0) {
+          try {
+            fs.readdirSync(DOWNLOAD_DIR).forEach(f => {
+              if (beforeDl.has(f) || f.startsWith('.')) return;
+              const fp = path.join(DOWNLOAD_DIR, f);
+              try {
+                if (fs.statSync(fp).isFile()) {
+                  addHistoryEntry({ name: f, size: fs.statSync(fp).size });
+                }
+              } catch {}
+            });
+          } catch {}
           socket.emit('status', { message: 'Selesai! File tersimpan di folder downloads', type: 'success' });
           socket.emit('progress', 100);
         } else if (code !== 0) {

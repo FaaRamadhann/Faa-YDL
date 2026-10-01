@@ -169,11 +169,11 @@ els.urlInput.addEventListener('keydown', (e) => {
 });
 
 document.getElementById('btn-clear-history').addEventListener('click', async () => {
-  if (!confirm('Hapus semua file download?')) return;
+  if (!confirm('Hapus riwayat? File hasil download tetap tersimpan di folder download.')) return;
   try {
     await fetch('/api/clear-history', { method: 'POST' });
     els.historyList.innerHTML = '<p class="empty-msg">Belum ada file yang diunduh.</p>';
-    addLog('History dibersihkan', 'success');
+    addLog('Riwayat dibersihkan (file tetap tersimpan)', 'success');
   } catch {
     addLog('Gagal membersihkan history', 'error');
   }

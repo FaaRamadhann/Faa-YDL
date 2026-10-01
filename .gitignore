@@ -21,6 +21,9 @@ __pycache__/
 downloads/*
 !downloads/.gitkeep
 
+# Log riwayat web UI (dibuat saat server jalan, jangan commit)
+history.json
+
 # Payload & staging modul (diregenerasi via prepare_payload.py)
 FaaDL-Module/system/
 FaaDL-Module/payload/
