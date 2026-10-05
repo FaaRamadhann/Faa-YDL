@@ -59,35 +59,46 @@ public class DlEngine {
 
     public static String sanitize(String s) {
         if (s == null || s.length() == 0) return "video";
+        // Hanya buang yang benar-benar ilegal di filesystem:
+        // pemisah path, karakter ilegal Windows, dan karakter kontrol.
+        // Emoji, simbol, dan huruf non-ASCII DIPERTAHANKAN apa adanya.
         String r = s.replaceAll("[\\\\/:*?\"<>|\\p{Cntrl}]", "_").trim();
-        // huruf/angka unicode dipertahankan (CJK, Arab, dsb); emoji/simbol jadi _
-        StringBuilder b = new StringBuilder();
-        for (int i = 0; i < r.length(); i++) {
-            char c = r.charAt(i);
-            if (c >= 32 && c < 127) {
-                b.append(c);
-                continue;
-            }
-            int t = Character.getType(c);
-            boolean keep = t == Character.UPPERCASE_LETTER
-                    || t == Character.LOWERCASE_LETTER
-                    || t == Character.TITLECASE_LETTER
-                    || t == Character.MODIFIER_LETTER
-                    || t == Character.OTHER_LETTER
-                    || t == Character.NON_SPACING_MARK
-                    || t == Character.COMBINING_SPACING_MARK
-                    || t == Character.ENCLOSING_MARK
-                    || t == Character.DECIMAL_DIGIT_NUMBER
-                    || t == Character.LETTER_NUMBER
-                    || t == Character.OTHER_NUMBER
-                    || t == Character.DASH_PUNCTUATION
-                    || t == Character.SPACE_SEPARATOR;
-            b.append(keep ? c : '_');
+        // rapikan spasi ganda (spasi ASCII saja, biar NBSP dkk tidak ikut berubah)
+        r = r.replaceAll(" +", " ").trim();
+        // buang titik/spasi di ujung nama (bermasalah di sebagian filesystem)
+        int e = r.length();
+        while (e > 0) {
+            char c = r.charAt(e - 1);
+            if (c == '.' || c == ' ') e--;
+            else break;
         }
-        r = b.toString().replaceAll(" +", " ").trim();
-        if (r.length() > 80) r = r.substring(0, 80).trim();
+        r = r.substring(0, e);
+        // potong maksimal 80 code point (tanpa membelah surrogate pair emoji),
+        // lalu pastikan muat di batas nama file (255 byte UTF-8)
+        r = truncateCodePoints(r, 80);
+        r = truncateUtf8Bytes(r, 200);
+        r = r.trim();
         if (r.length() == 0) r = "video";
         return r;
+    }
+
+    private static String truncateCodePoints(String s, int maxCp) {
+        if (s.codePointCount(0, s.length()) <= maxCp) return s;
+        return s.substring(0, s.offsetByCodePoints(0, maxCp));
+    }
+
+    private static String truncateUtf8Bytes(String s, int maxBytes) {
+        int bytes = 0;
+        int i = 0;
+        int n = s.length();
+        while (i < n) {
+            int cp = s.codePointAt(i);
+            int cbl = cp < 0x80 ? 1 : (cp < 0x800 ? 2 : (cp < 0x10000 ? 3 : 4));
+            if (bytes + cbl > maxBytes) break;
+            bytes += cbl;
+            i += Character.charCount(cp);
+        }
+        return s.substring(0, i);
     }
 
     /** Pastikan binary ada + bisa dieksekusi, kalau tidak lempar pesan jelas. */
