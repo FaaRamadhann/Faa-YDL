@@ -25,14 +25,14 @@ Tiga varian, satu repo:
 ## Download
 
 Semua file jadi ada di **1 release**:
-[https://github.com/FaaRamadhann/Faa-YDL/releases/tag/v1.2.0](https://github.com/FaaRamadhann/Faa-YDL/releases/tag/v1.2.0)
+[https://github.com/FaaRamadhann/Faa-YDL/releases/tag/v1.2.1](https://github.com/FaaRamadhann/Faa-YDL/releases/tag/v1.2.1)
 
 | File | Buat apa |
 |---|---|
-| `faadl-v1.2.0.zip` | Modul Magisk/KernelSU/APatch (install dari aplikasi Magisk, lalu reboot) |
-| `faa-dl_v1.0.4_arm64.apk` | APK standalone HP 64-bit (kebanyakan HP baru) |
-| `faa-dl_v1.0.4_arm32.apk` | APK standalone HP 32-bit (HP lama) |
-| `faa-dl_v1.0.4_universal.apk` | APK standalone semua HP (lebih besar) |
+| `faadl-v1.2.1.zip` | Modul Magisk/KernelSU/APatch (install dari aplikasi Magisk, lalu reboot) |
+| `faa-dl_v1.0.5_arm64.apk` | APK standalone HP 64-bit (kebanyakan HP baru) |
+| `faa-dl_v1.0.5_arm32.apk` | APK standalone HP 32-bit (HP lama) |
+| `faa-dl_v1.0.5_universal.apk` | APK standalone semua HP (lebih besar) |
 | `faa-ytdownloader-termux-v1.0.1.zip` | Web UI Termux (ekstrak, `npm install`, `node server.js`) |
 | `faa-ytdownloader-win-v1.0.1.zip` | Web UI Windows (ekstrak, `install.bat` Run as admin, ketik `fydl`) |
 
