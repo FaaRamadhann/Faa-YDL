@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""ydl - CLI download Faa YTDownloader (Windows), mirip fdl di modul Magisk.
+"""fdl - CLI download Faa YTDownloader (Windows), mirip fdl di modul Magisk.
 
-    ydl --test [URL]   diagnostik yt-dlp/ffmpeg/innertube
-    ydl mp3 <URL>      download audio -> Downloads\\FaaDL\\*.mp3
-    ydl mp4 <URL>      download video -> Downloads\\FaaDL\\*.mp4
-    ydl help           bantuan ini
+    fdl --test [URL]   diagnostik yt-dlp/ffmpeg/innertube
+    fdl mp3 <URL>      download audio -> Downloads\\FaaDL\\*.mp3
+    fdl mp4 <URL>      download video -> Downloads\\FaaDL\\*.mp4
+    fdl help           bantuan ini
 """
 import json
 import os
@@ -21,8 +21,8 @@ TEST_URL = "https://www.youtube.com/watch?v=Oreek8z0yxk"
 
 
 def usage():
-    print("Pakai: ydl --test [URL] | mp3 URL | mp4 URL | help")
-    print("Contoh: ydl mp3 https://www.youtube.com/watch?v=Oreek8z0yxk")
+    print("Pakai: fdl --test [URL] | mp3 URL | mp4 URL | help")
+    print("Contoh: fdl mp3 https://www.youtube.com/watch?v=Oreek8z0yxk")
     print("Hasil: " + OUTDIR)
 
 
