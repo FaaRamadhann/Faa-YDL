@@ -40,6 +40,15 @@ fydl mp4 URL        :: download MP4 ke Downloads\FaaDL
 fydl --test [URL]   :: cek node, yt-dlp, ffmpeg (+ judul video)
 ```
 
+Ada juga `ydl` (Python, mirip `fdl` di modul Magisk) khusus download +
+diagnostik innertube, hasilnya sama ke `Downloads\FaaDL`:
+
+```bat
+ydl mp3 URL         :: download MP3
+ydl mp4 URL         :: download MP4
+ydl --test [URL]    :: cek yt-dlp/ffmpeg + status innertube + judul video
+```
+
 Hapus dari PATH: klik kanan `uninstall.bat` → Run as administrator.
 
 ## 4. Jalanin manual (tanpa install)
