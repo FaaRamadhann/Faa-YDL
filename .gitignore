@@ -36,6 +36,13 @@ FaaDL-Module/manager.apk
 Thumbs.db
 *.log
 
+# Gradle (wrapper tetap dilacak, cache tidak)
+.gradle/
+local.properties
+
+# Gradle wrapper jar dikecualikan dari aturan *.jar di atas
+!FaaDL-Module/manager/gradle/wrapper/gradle-wrapper.jar
+
 # Payload standalone (diregenerasi via tools/prepare_*.py)
 FaaDL-Standalone/assets/faapy/
 FaaDL-Standalone/assets/bin/

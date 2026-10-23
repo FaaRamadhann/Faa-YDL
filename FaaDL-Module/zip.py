@@ -106,11 +106,20 @@ def zip_info_for(path: pathlib.Path, arcname_posix: str) -> zipfile.ZipInfo:
 
 
 def sync_manager_apk(module_dir: pathlib.Path) -> None:
-    """Salin hasil build manager ke root modul bila lebih baru."""
-    src = module_dir / "manager" / "build" / "manager.apk"
+    """Salin hasil build manager ke root modul bila lebih baru.
+
+    Dua jalur build yang didukung:
+      build/manager.apk                        (build.py / tanpa Gradle)
+      build/outputs/apk/release/manager.apk    (gradlew assembleRelease)
+    """
+    cands = [module_dir / "manager" / "build" / "manager.apk",
+             module_dir / "manager" / "build" / "outputs" / "apk" / "release" / "manager.apk"]
+    srcs = [p for p in cands if p.is_file()]
     dst = module_dir / "manager.apk"
-    if src.is_file() and (not dst.is_file()
-                          or src.stat().st_mtime > dst.stat().st_mtime):
+    if not srcs:
+        return
+    src = max(srcs, key=lambda p: p.stat().st_mtime)
+    if not dst.is_file() or src.stat().st_mtime > dst.stat().st_mtime:
         shutil.copyfile(src, dst)
         print("sync: manager.apk (%d KB)" % (dst.stat().st_size // 1024))
 

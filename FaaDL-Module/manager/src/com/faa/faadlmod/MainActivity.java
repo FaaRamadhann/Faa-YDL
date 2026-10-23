@@ -42,6 +42,7 @@ import java.util.Map;
 
 public class MainActivity extends Activity {
 
+    private Theme th;
     private static final int REQ_PERM = 1001;
     private static final int REQ_QR_SCAN = 1002;
 
@@ -79,6 +80,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        th = Theme.load(this);
         buildUI();
         askPerms();
         maybeAskRoot();
@@ -101,20 +103,36 @@ public class MainActivity extends Activity {
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(pad, pad, pad, pad);
-        root.setBackgroundColor(Color.parseColor("#E0F2FE"));
+        root.setBackgroundColor(th.bg);
+
+        LinearLayout topRow = new LinearLayout(this);
+        topRow.setOrientation(LinearLayout.HORIZONTAL);
+        topRow.setGravity(Gravity.END);
+        Button themeBtn = outlineBtn("Tema: " + th.name);
+        themeBtn.setTextSize(12);
+        themeBtn.setMinHeight(0);
+        themeBtn.setPadding(dp(14), dp(6), dp(14), dp(6));
+        themeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                Theme.toggle(MainActivity.this);
+                recreate();
+            }
+        });
+        topRow.addView(themeBtn, lp(-2, -2));
+        root.addView(topRow, lp(-1, -2));
 
         TextView title = new TextView(this);
         title.setText("FYDL");
         title.setTextSize(26);
         title.setTypeface(Typeface.DEFAULT_BOLD);
-        title.setTextColor(Color.parseColor("#0284C7"));
+        title.setTextColor(th.primary);
         title.setGravity(Gravity.CENTER);
         root.addView(title, lp(-1, -2));
 
         TextView sub = new TextView(this);
         sub.setText("Download audio/video dari YouTube");
         sub.setTextSize(13);
-        sub.setTextColor(Color.parseColor("#475569"));
+        sub.setTextColor(th.subtext);
         sub.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams slp = lp(-1, -2);
         slp.bottomMargin = dp(12);
@@ -189,7 +207,7 @@ public class MainActivity extends Activity {
         hTitle.setText("Riwayat download  (/sdcard/Download/FaaDL)");
         hTitle.setTextSize(13);
         hTitle.setTypeface(Typeface.DEFAULT_BOLD);
-        hTitle.setTextColor(Color.parseColor("#475569"));
+        hTitle.setTextColor(th.subtext);
         pageHistory.addView(hTitle, lp(-1, -2));
         historyView = new TextView(this);
         historyView.setText("Belum ada file.");
@@ -217,7 +235,7 @@ public class MainActivity extends Activity {
         dTitle.setText("Diagnostik (hasil juga masuk Log)");
         dTitle.setTextSize(13);
         dTitle.setTypeface(Typeface.DEFAULT_BOLD);
-        dTitle.setTextColor(Color.parseColor("#475569"));
+        dTitle.setTextColor(th.subtext);
         pageDebug.addView(dTitle, lp(-1, -2));
         pageDebug.addView(dbgBtn("Tes Python", 0), lp(-1, -2));
         pageDebug.addView(dbgBtn("Tes ffmpeg", 1), lp(-1, -2));
@@ -243,12 +261,12 @@ public class MainActivity extends Activity {
         progCard.addView(progressBar, lp(-1, dp(8)));
         progressPct = new TextView(this);
         progressPct.setText("0%");
-        progressPct.setTextColor(Color.parseColor("#0284C7"));
+        progressPct.setTextColor(th.primary);
         progressPct.setTypeface(Typeface.DEFAULT_BOLD);
         progCard.addView(progressPct, lp(-1, -2));
         binStatus = new TextView(this);
         binStatus.setTextSize(11);
-        binStatus.setTextColor(Color.parseColor("#475569"));
+        binStatus.setTextColor(th.subtext);
         binStatus.setText("ffmpeg: ... | yt-dlp: ... | node: ...");
         progCard.addView(binStatus, lp(-1, -2));
         root.addView(progCard, plp);
@@ -257,7 +275,7 @@ public class MainActivity extends Activity {
         TextView logTitle = new TextView(this);
         logTitle.setText("Log");
         logTitle.setTextSize(12);
-        logTitle.setTextColor(Color.parseColor("#64748B"));
+        logTitle.setTextColor(th.muted);
         LinearLayout.LayoutParams llp = lp(-1, -2);
         llp.topMargin = dp(12);
         root.addView(logTitle, llp);
@@ -320,11 +338,17 @@ public class MainActivity extends Activity {
         Button[] all = new Button[]{tabManual, tabQr, tabHistory, tabDebug};
         for (int i = 0; i < all.length; i++) {
             if (all[i] == active) {
-                all[i].setBackgroundColor(Color.parseColor("#FFFFFF"));
-                all[i].setTextColor(Color.parseColor("#0C4A6E"));
+                GradientDrawable on = new GradientDrawable();
+                on.setColor(th.card);
+                on.setCornerRadius(dp(th.cardRadius - 2));
+                on.setStroke(dp(1), th.stroke);
+                all[i].setBackground(on);
+                all[i].setTextColor(th.textStrong);
+                all[i].setTypeface(Typeface.DEFAULT_BOLD);
             } else {
                 all[i].setBackgroundColor(Color.TRANSPARENT);
-                all[i].setTextColor(Color.parseColor("#64748B"));
+                all[i].setTextColor(th.muted);
+                all[i].setTypeface(Typeface.DEFAULT);
             }
         }
     }
@@ -333,7 +357,9 @@ public class MainActivity extends Activity {
         Button b = new Button(this);
         b.setText(t);
         b.setBackgroundColor(Color.TRANSPARENT);
-        b.setTextColor(Color.parseColor("#64748B"));
+        b.setTextColor(th.muted);
+        b.setAllCaps(false);
+        b.setTextSize(13);
         return b;
     }
 
@@ -342,7 +368,7 @@ public class MainActivity extends Activity {
         v.setText(t);
         v.setTextSize(13);
         v.setTypeface(Typeface.DEFAULT_BOLD);
-        v.setTextColor(Color.parseColor("#475569"));
+        v.setTextColor(th.subtext);
         LinearLayout.LayoutParams p = lp(-1, -2);
         p.topMargin = dp(8);
         p.bottomMargin = dp(4);
@@ -355,27 +381,34 @@ public class MainActivity extends Activity {
         b.setText(t);
         b.setTextColor(Color.WHITE);
         b.setTypeface(Typeface.DEFAULT_BOLD);
-        GradientDrawable d = new GradientDrawable(
-                GradientDrawable.Orientation.LEFT_RIGHT,
-                new int[]{Color.parseColor("#0284C7"), Color.parseColor("#0D9488")});
-        d.setCornerRadius(dp(10));
+        GradientDrawable d = new GradientDrawable();
+        d.setColor(th.primary);
+        d.setCornerRadius(dp(th.btnRadius));
         b.setBackground(d);
+        b.setAllCaps(false);
+        b.setMinHeight(dp(48));
         return b;
     }
 
     private Button outlineBtn(String t) {
         Button b = new Button(this);
         b.setText(t);
-        b.setTextColor(Color.parseColor("#0284C7"));
-        b.setBackground(cardBg());
+        b.setTextColor(th.primaryDeep);
+        GradientDrawable d = new GradientDrawable();
+        d.setColor(th.card);
+        d.setCornerRadius(dp(th.btnRadius));
+        d.setStroke(dp(1), th.stroke);
+        b.setBackground(d);
+        b.setAllCaps(false);
+        b.setMinHeight(dp(44));
         return b;
     }
 
     private GradientDrawable cardBg() {
         GradientDrawable d = new GradientDrawable();
-        d.setColor(Color.parseColor("#FFFFFF"));
-        d.setCornerRadius(dp(10));
-        d.setStroke(1, Color.parseColor("#CBD5E1"));
+        d.setColor(th.card);
+        d.setCornerRadius(dp(th.cardRadius));
+        d.setStroke(dp(1), th.stroke);
         return d;
     }
 
