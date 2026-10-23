@@ -1,0 +1,3 @@
+#!/system/bin/sh
+# Faa Magisk Python - py (alias python3)
+exec python3 "$@"

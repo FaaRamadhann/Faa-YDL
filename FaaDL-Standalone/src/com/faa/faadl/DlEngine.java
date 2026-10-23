@@ -59,12 +59,10 @@ public class DlEngine {
 
     public static String sanitize(String s) {
         if (s == null || s.length() == 0) return "video";
-        // Hanya buang yang benar-benar ilegal di filesystem:
-        // pemisah path, karakter ilegal Windows, dan karakter kontrol.
-        // Emoji, simbol, dan huruf non-ASCII DIPERTAHANKAN apa adanya.
-        String r = s.replaceAll("[\\\\/:*?\"<>|\\p{Cntrl}]", "_").trim();
-        // rapikan spasi ganda (spasi ASCII saja, biar NBSP dkk tidak ikut berubah)
-        r = r.replaceAll(" +", " ").trim();
+        // ext4/FUSE (/sdcard) cuma melarang '/' dan NUL. Karakter Windows
+        // (| * ? " < > :) legal di sini, jadi judul dibiarkan APA ADANYA.
+        String r = s.replace('\u0000', ' ').replace('/', '\uFF0F')
+                .replaceAll("[\\x00-\\x1F\\x7F]", "").trim();
         // buang titik/spasi di ujung nama (bermasalah di sebagian filesystem)
         int e = r.length();
         while (e > 0) {

@@ -1,0 +1,3 @@
+#!/system/bin/sh
+# Faa Magisk Python - pip3 (pip)
+exec python3 -m pip "$@"
