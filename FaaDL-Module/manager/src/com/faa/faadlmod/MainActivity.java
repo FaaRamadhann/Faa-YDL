@@ -290,6 +290,7 @@ public class MainActivity extends Activity {
         root.addView(logScroll, slog);
 
         ScrollView outer = new ScrollView(this);
+        outer.setBackgroundColor(th.bg);
         outer.addView(root);
 
         setContentView(outer);
@@ -381,8 +382,10 @@ public class MainActivity extends Activity {
         b.setText(t);
         b.setTextColor(Color.WHITE);
         b.setTypeface(Typeface.DEFAULT_BOLD);
-        GradientDrawable d = new GradientDrawable();
-        d.setColor(th.primary);
+        GradientDrawable d = (th.btnGradient == null)
+                ? new GradientDrawable()
+                : new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, th.btnGradient);
+        if (th.btnGradient == null) d.setColor(th.primary);
         d.setCornerRadius(dp(th.btnRadius));
         b.setBackground(d);
         b.setAllCaps(false);

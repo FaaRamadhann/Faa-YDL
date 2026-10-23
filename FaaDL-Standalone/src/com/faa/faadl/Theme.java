@@ -6,6 +6,7 @@ import android.graphics.Color;
 
 /**
  * Tema tampilan yang bisa dipilih user: Miuix (ala HyperOS) atau Material.
+ * Dua-duanya tetap pakai identitas biru Faa DL; bedanya bentuk & elevasi.
  * Disimpan di prefs, dipakai saat buildUI() dijalankan ulang.
  */
 public final class Theme {
@@ -18,15 +19,17 @@ public final class Theme {
     public final String name;
     public final int bg, card, stroke, primary, primaryDeep, textStrong, subtext, muted;
     public final int cardRadius, btnRadius;
+    /** null = tombol solid th.primary; selain itu gradien kiri->kanan. */
+    public final int[] btnGradient;
 
     private Theme(boolean miuix) {
         this.miuix = miuix;
         this.name = miuix ? "Miuix" : "Material";
         if (miuix) {
-            // HyperOS: latar abu terang, kartu putih, sudut besar, tombol pil.
-            bg = Color.parseColor("#F2F4F7");
+            // HyperOS: latar biru muda khas Faa DL, sudut besar, tombol pil gradien.
+            bg = Color.parseColor("#E0F2FE");
             card = Color.WHITE;
-            stroke = Color.parseColor("#E3E8EF");
+            stroke = Color.parseColor("#BAE6FD");
             primary = Color.parseColor("#0284C7");
             primaryDeep = Color.parseColor("#0369A1");
             textStrong = Color.parseColor("#0C4A6E");
@@ -34,18 +37,20 @@ public final class Theme {
             muted = Color.parseColor("#64748B");
             cardRadius = 18;
             btnRadius = 26;
+            btnGradient = new int[]{Color.parseColor("#0284C7"), Color.parseColor("#0D9488")};
         } else {
-            // Material 3 (light): permukaan lebih terang, sudut lebih kecil.
-            bg = Color.parseColor("#F8FAFD");
+            // Material 3 (light): permukaan netral, tombol solid, sudut lebih kecil.
+            bg = Color.parseColor("#F1F5F9");
             card = Color.WHITE;
-            stroke = Color.parseColor("#DDE5EE");
-            primary = Color.parseColor("#0B6BCB");
-            primaryDeep = Color.parseColor("#084E94");
-            textStrong = Color.parseColor("#1A1C1E");
-            subtext = Color.parseColor("#44474E");
-            muted = Color.parseColor("#73777F");
+            stroke = Color.parseColor("#E2E8F0");
+            primary = Color.parseColor("#0284C7");
+            primaryDeep = Color.parseColor("#0369A1");
+            textStrong = Color.parseColor("#0F172A");
+            subtext = Color.parseColor("#475569");
+            muted = Color.parseColor("#64748B");
             cardRadius = 14;
             btnRadius = 12;
+            btnGradient = null;
         }
     }
 

@@ -1,6 +1,6 @@
 {
   "name": "ytdl-webui",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "YouTube Downloader with Web UI - supports QR scan & manual input",
   "main": "server.js",
   "scripts": {
