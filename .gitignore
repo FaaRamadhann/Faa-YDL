@@ -35,3 +35,7 @@ FaaDL-Module/manager.apk
 .DS_Store
 Thumbs.db
 *.log
+
+# Payload standalone (diregenerasi via tools/prepare_*.py)
+FaaDL-Standalone/assets/faapy/
+FaaDL-Standalone/assets/bin/
