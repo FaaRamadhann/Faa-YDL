@@ -9,4 +9,6 @@ curl -sSL "$URL" -O "$OUT_DIR/$OUT" || wget -c "$URL" -O "$OUT_DIR/$OUT"
 echo "Downloaded $OUT to $OUT_DIR"
 chmod 755 "$OUT_DIR/$OUT"
 
+ls -la "$OUT_DIR/$OUT"
+
 echo "Instalasi selesai! Ketik 'source ~/.bashrc' atau buka ulang terminal."
