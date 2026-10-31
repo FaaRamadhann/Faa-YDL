@@ -2,32 +2,30 @@
 
 Universal command-line interface for **Faa YTDownloader**. The same Python CLI implementation is designed to run on:
 
-- Windows
-- Linux
-- Android through Termux
+* Windows
+* Linux
+* Android through Termux
 
 The CLI uses `yt-dlp` to download media and `ffmpeg` for audio extraction/conversion.
 
 ## Features
 
-- Download audio as MP3 (`192K`).
-- Download video using yt-dlp's `best` format selection.
-- Run diagnostics with `--test`.
-- Detect `yt-dlp` and `ffmpeg` from the system `PATH`.
-- Fall back to `python -m yt_dlp` when the `yt-dlp` executable is unavailable but the Python module is installed.
-- Select a platform-appropriate default output directory.
-- Override the output directory with `FDL_OUTPUT_DIR`.
+* Download audio as MP3 (`192K`).
+* Download video using yt-dlp's `best` format selection.
+* Run diagnostics with `--test`.
+* Detect `yt-dlp` and `ffmpeg` from the system `PATH`.
+* Fall back to `python -m yt_dlp` when the `yt-dlp` executable is unavailable but the Python module is installed.
+* Select a platform-appropriate default output directory.
+* Override the output directory with `FDL_OUTPUT_DIR`.
 
 ## Project files
 
-``` text
+```text
 FDL-CLI/
 ├── fdl.py       # Cross-platform CLI implementation
 ├── fdl          # Extensionless executable for Linux / Termux
 └── install.sh   # One-liner installer script for Linux / Termux
 ```
-
----
 
 ## ⚡ Quick Installation (Linux & Termux)
 
@@ -36,6 +34,7 @@ You can automatically install `fdl` using a single `curl` command.
 ### 1. Install Dependencies
 
 **Termux:**
+
 ```bash
 pkg update && pkg install python ffmpeg curl -y
 python -m pip install -U yt-dlp
@@ -43,6 +42,7 @@ termux-setup-storage
 ```
 
 **Linux (Debian/Ubuntu):**
+
 ```bash
 sudo apt update && sudo apt install python3 ffmpeg curl -y
 python3 -m pip install -U yt-dlp
@@ -55,8 +55,6 @@ Execute this command in your terminal:
 ```bash
 bash -c "$(curl -sSL https://raw.githubusercontent.com/FaaRamadhann/Faa-YDL/refs/heads/main/FDL-CLI/install.sh)"
 ```
-
-> **Note:** Reload your shell (`source ~/.bashrc` or restart terminal) if the `fdl` command isn't recognized immediately.
 
 ---
 
@@ -73,15 +71,30 @@ hash -r
 
 ### Linux (Manual)
 
+1. Download and grant execution permission:
+
 ```bash
 mkdir -p "$HOME/.local/bin"
 curl -sSL "https://raw.githubusercontent.com/FaaRamadhann/Faa-YDL/refs/heads/main/FDL-CLI/fdl" -o "$HOME/.local/bin/fdl"
 chmod +x "$HOME/.local/bin/fdl"
-
-# Add alias if ~/.local/bin is not in PATH
-echo 'alias fdl="$HOME/.local/bin/fdl"' >> ~/.bashrc
-source ~/.bashrc
 ```
+
+2. Add `$HOME/.local/bin` to your `PATH`:
+
+Append the following block to your shell configuration file (`~/.bashrc` or `~/.zshrc`):
+
+```bash
+if [ -d "$HOME/.local/bin" ]; then
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+```
+
+> **📌 Note:** If neither `~/.bashrc` nor `~/.zshrc` exists in your home directory, create one first (e.g., `touch ~/.bashrc`), paste the code block above into it, and then apply changes:
+> ```bash
+> source ~/.bashrc
+> ```
+
+---
 
 ### Windows
 
@@ -172,21 +185,23 @@ fdl --test
 
 The diagnostic command reports:
 
-- Operating system and CPU architecture.
-- Python version.
-- yt-dlp executable/module availability and version.
-- ffmpeg availability and version.
-- Selected output directory.
-- YouTube Innertube player response for the supplied URL, including playability status and available format counts.
+* Operating system and CPU architecture.
+* Python version.
+* yt-dlp executable/module availability and version.
+* ffmpeg availability and version.
+* Selected output directory.
+* YouTube Innertube player response for the supplied URL, including playability status and available format counts.
 
 ---
 
 ## Troubleshooting
 
 ### `fdl: command not found`
-Run `source ~/.bashrc` (or `source ~/.zshrc`), or restart your terminal.
+
+Make sure `$HOME/.local/bin` is in your `PATH`, then run `source ~/.bashrc` (or `source ~/.zshrc`), or restart your terminal.
 
 ### `Permission denied` on Linux / Termux
+
 Make the extensionless executable runnable:
 
 ```bash
@@ -196,6 +211,7 @@ chmod +x ~/.local/bin/fdl
 ```
 
 ### `yt-dlp: NOT FOUND`
+
 Install or update yt-dlp:
 
 ```bash
@@ -203,19 +219,23 @@ python -m pip install -U yt-dlp
 ```
 
 ### `ffmpeg: NOT FOUND`
+
 Install ffmpeg and ensure it is available in `PATH`.
 
 Termux:
+
 ```bash
 pkg install ffmpeg
 ```
 
 Debian / Ubuntu:
+
 ```bash
 sudo apt install ffmpeg
 ```
 
 ### Termux cannot write to `/sdcard/Download/FaaDL`
+
 Run `termux-setup-storage` and grant permission.
 
 ---
