@@ -89,6 +89,16 @@ if [ -d "$HOME/.local/bin" ]; then
 fi
 ```
 
+Command add
+
+```bash
+cat << 'EOF' >> ~/.bashrc
+if [ -d "$HOME/.local/bin" ]; then
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+EOF
+```
+
 > **📌 Note:** If neither `~/.bashrc` nor `~/.zshrc` exists in your home directory, create one first (e.g., `touch ~/.bashrc`), paste the code block above into it, and then apply changes:
 > ```bash
 > source ~/.bashrc
