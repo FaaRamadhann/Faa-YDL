@@ -56,6 +56,11 @@ Execute this command in your terminal:
 bash -c "$(curl -sSL https://raw.githubusercontent.com/FaaRamadhann/Faa-YDL/refs/heads/main/FDL-CLI/install.sh)"
 ```
 
+or
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/FaaRamadhann/Faa-YDL/refs/heads/main/FDL-CLI/install.sh | bash
+```
 ---
 
 ## Manual Installation
