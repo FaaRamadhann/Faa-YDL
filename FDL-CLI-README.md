@@ -1,151 +1,108 @@
 # FDL-CLI
 
-Universal command-line interface for **Faa YTDownloader**. The same
-Python CLI implementation is designed to run on:
+Universal command-line interface for **Faa YTDownloader**. The same Python CLI implementation is designed to run on:
 
--   Windows
--   Linux
--   Android through Termux
+- Windows
+- Linux
+- Android through Termux
 
-The CLI uses `yt-dlp` to download media and `ffmpeg` for audio
-extraction/conversion.
+The CLI uses `yt-dlp` to download media and `ffmpeg` for audio extraction/conversion.
 
 ## Features
 
--   Download audio as MP3 (`192K`).
--   Download video using yt-dlp's `best` format selection.
--   Run diagnostics with `--test`.
--   Detect `yt-dlp` and `ffmpeg` from the system `PATH`.
--   Fall back to `python -m yt_dlp` when the `yt-dlp` executable is
-    unavailable but the Python module is installed.
--   Select a platform-appropriate default output directory.
--   Override the output directory with `FDL_OUTPUT_DIR`.
+- Download audio as MP3 (`192K`).
+- Download video using yt-dlp's `best` format selection.
+- Run diagnostics with `--test`.
+- Detect `yt-dlp` and `ffmpeg` from the system `PATH`.
+- Fall back to `python -m yt_dlp` when the `yt-dlp` executable is unavailable but the Python module is installed.
+- Select a platform-appropriate default output directory.
+- Override the output directory with `FDL_OUTPUT_DIR`.
 
 ## Project files
 
 ``` text
 FDL-CLI/
 ├── fdl.py       # Cross-platform CLI implementation
-└── fdl          # Extensionless executable for Linux / Termux
+├── fdl          # Extensionless executable for Linux / Termux
+└── install.sh   # One-liner installer script for Linux / Termux
 ```
 
-`fdl` and `fdl.py` contain the same Python CLI. The extensionless `fdl`
-file is intended for systems where the command is installed directly
-into a directory in `PATH`.
+---
 
-## Requirements
+## ⚡ Quick Installation (Linux & Termux)
 
-  -----------------------------------------------------------------------
-  Platform                            Requirements
-  ----------------------------------- -----------------------------------
-  Windows                             Python 3, yt-dlp, ffmpeg
+You can automatically install `fdl` using a single `curl` command.
 
-  Linux                               Python 3, yt-dlp, ffmpeg
+### 1. Install Dependencies
 
-  Termux                              Python, yt-dlp, ffmpeg,
-                                      shared-storage permission
-                                      (optional, for the default output
-                                      path)
-  -----------------------------------------------------------------------
-
-`ffmpeg` is required for MP3 extraction. It is recommended to install it
-for all download formats.
-
-## Installation
-
-### Termux
-
-Install dependencies:
-
-``` bash
-pkg update
-pkg install python ffmpeg
+**Termux:**
+```bash
+pkg update && pkg install python ffmpeg curl -y
 python -m pip install -U yt-dlp
-```
-
-Allow Termux to access shared storage if you want downloads in
-`/sdcard/Download/FaaDL`:
-
-``` bash
 termux-setup-storage
 ```
 
-Install the extensionless command from this directory:
+**Linux (Debian/Ubuntu):**
+```bash
+sudo apt update && sudo apt install python3 ffmpeg curl -y
+python3 -m pip install -U yt-dlp
+```
 
-``` bash
+### 2. Run One-Liner Installer
+
+Execute this command in your terminal:
+
+```bash
+bash -c "$(curl -sSL https://raw.githubusercontent.com/FaaRamadhann/Faa-YDL/refs/heads/main/FDL-CLI/install.sh)"
+```
+
+> **Note:** Reload your shell (`source ~/.bashrc` or restart terminal) if the `fdl` command isn't recognized immediately.
+
+---
+
+## Manual Installation
+
+### Termux (Manual)
+
+```bash
 mkdir -p "$PREFIX/bin"
-install -m 755 fdl "$PREFIX/bin/fdl"
-```
-
-If the `install` command or its options are unavailable, use:
-
-``` bash
-cp fdl "$PREFIX/bin/fdl"
+curl -sSL "https://raw.githubusercontent.com/FaaRamadhann/Faa-YDL/refs/heads/main/FDL-CLI/fdl" -o "$PREFIX/bin/fdl"
 chmod 755 "$PREFIX/bin/fdl"
-```
-
-Refresh Bash's command lookup cache and verify:
-
-``` bash
 hash -r
-fdl help
-fdl --test
 ```
 
-### Debian / Ubuntu
+### Linux (Manual)
 
-Install dependencies:
+```bash
+mkdir -p "$HOME/.local/bin"
+curl -sSL "https://raw.githubusercontent.com/FaaRamadhann/Faa-YDL/refs/heads/main/FDL-CLI/fdl" -o "$HOME/.local/bin/fdl"
+chmod +x "$HOME/.local/bin/fdl"
 
-``` bash
-sudo apt update
-sudo apt install -y python3 ffmpeg
-```
-
-Install yt-dlp using a supported method for your distribution. For
-example, use your distribution package if available, or install it in an
-isolated Python environment with `pipx`:
-
-``` bash
-sudo apt install -y pipx
-pipx ensurepath
-pipx install yt-dlp
-```
-
-Open a new shell if needed, then install the CLI:
-
-``` bash
-sudo install -m 755 fdl /usr/local/bin/fdl
-```
-
-Verify:
-
-``` bash
-fdl help
-fdl --test
+# Add alias if ~/.local/bin is not in PATH
+echo 'alias fdl="$HOME/.local/bin/fdl"' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 ### Windows
 
 Keep `fdl.py` and `fdl.bat` in the same directory.
 
-Install Python 3, yt-dlp, and ffmpeg, and make sure their executable
-paths are available through `PATH`.
+Install Python 3, yt-dlp, and ffmpeg, and make sure their executable paths are available through `PATH`.
 
 Run from Command Prompt or PowerShell:
 
-``` powershell
+```powershell
 .\fdl.bat help
 .\fdl.bat --test
 ```
 
-To run `fdl` from any directory, add the directory containing both files
-to the Windows `PATH`.
+To run `fdl` from any directory, add the directory containing both files to the Windows `PATH`.
 
-The batch launcher tries `py -3` first and falls back to `python`.
+---
 
 ## Usage
 
-``` bash
+```bash
 fdl help
 fdl --test
 fdl --test "URL"
@@ -155,46 +112,33 @@ fdl mp4 "URL"
 
 Examples:
 
-``` bash
+```bash
 fdl mp3 "https://www.youtube.com/watch?v=VIDEO_ID"
 fdl mp4 "https://youtu.be/VIDEO_ID"
 ```
 
 ### Commands
 
-  -----------------------------------------------------------------------
-  Command                             Description
-  ----------------------------------- -----------------------------------
-  `fdl`                               Display usage information
+| Command | Description |
+| :--- | :--- |
+| `fdl` | Display usage information |
+| `fdl help` | Display help |
+| `fdl --test` | Run diagnostics using built-in test URL |
+| `fdl --test URL` | Run diagnostics using supplied URL |
+| `fdl mp3 URL` | Extract audio and save as MP3 at 192K |
+| `fdl mp4 URL` | Download video using yt-dlp's `best` format selection |
 
-  `fdl help`                          Display help
-
-  `fdl --test`                        Run diagnostics using the built-in
-                                      test URL
-
-  `fdl --test URL`                    Run diagnostics using the supplied
-                                      URL
-
-  `fdl mp3 URL`                       Extract audio and save it as MP3 at
-                                      192K
-
-  `fdl mp4 URL`                       Download video using yt-dlp's
-                                      `best` format selection
-  -----------------------------------------------------------------------
-
-The `mp4` command uses yt-dlp's `-f best` selector. The resulting
-container and quality depend on the formats available for the selected
-video.
+---
 
 ## Output directory
 
 The default output directory is selected automatically:
 
-  Platform   Default directory
-  ---------- ---------------------------------
-  Termux     `/sdcard/Download/FaaDL`
-  Linux      `~/Downloads/FaaDL`
-  Windows    `%USERPROFILE%\Downloads\FaaDL`
+| Platform | Default directory |
+| :--- | :--- |
+| **Termux** | `/sdcard/Download/FaaDL` |
+| **Linux** | `~/Downloads/FaaDL` |
+| **Windows** | `%USERPROFILE%\Downloads\FaaDL` |
 
 The directory is created automatically when a download starts.
 
@@ -204,132 +148,78 @@ Set `FDL_OUTPUT_DIR` to override the default.
 
 Linux / Termux:
 
-``` bash
+```bash
 export FDL_OUTPUT_DIR="$HOME/Videos/FaaDL"
 fdl mp4 "URL"
 ```
 
 Windows PowerShell:
 
-``` powershell
+```powershell
 $env:FDL_OUTPUT_DIR = "$HOME\Downloads\My-FaaDL"
 .\fdl.bat mp4 "URL"
 ```
+
+---
 
 ## Diagnostics
 
 Run:
 
-``` bash
+```bash
 fdl --test
 ```
 
 The diagnostic command reports:
 
--   Operating system and CPU architecture.
--   Python version.
--   yt-dlp executable/module availability and version.
--   ffmpeg availability and version.
--   Selected output directory.
--   YouTube Innertube player response for the supplied URL, including
-    playability status and available format counts.
+- Operating system and CPU architecture.
+- Python version.
+- yt-dlp executable/module availability and version.
+- ffmpeg availability and version.
+- Selected output directory.
+- YouTube Innertube player response for the supplied URL, including playability status and available format counts.
 
-A successful diagnostic does not guarantee that every video can be
-downloaded. YouTube availability, authentication, age restrictions,
-network conditions, and extractor changes can affect results.
+---
 
 ## Troubleshooting
 
-### `Permission denied` on Linux / Termux
+### `fdl: command not found`
+Run `source ~/.bashrc` (or `source ~/.zshrc`), or restart your terminal.
 
+### `Permission denied` on Linux / Termux
 Make the extensionless executable runnable:
 
-``` bash
+```bash
 chmod 755 "$PREFIX/bin/fdl"
-```
-
-For Linux installed under `/usr/local/bin`:
-
-``` bash
-sudo chmod 755 /usr/local/bin/fdl
+# or for Linux user binary:
+chmod +x ~/.local/bin/fdl
 ```
 
 ### `yt-dlp: NOT FOUND`
+Install or update yt-dlp:
 
-Install or update yt-dlp and ensure its executable directory is in
-`PATH`:
-
-``` bash
+```bash
 python -m pip install -U yt-dlp
 ```
 
-If the executable is not in `PATH`, the CLI can use `python -m yt_dlp`
-when the module is installed for the same Python interpreter used by
-`fdl`.
-
 ### `ffmpeg: NOT FOUND`
-
 Install ffmpeg and ensure it is available in `PATH`.
 
 Termux:
-
-``` bash
+```bash
 pkg install ffmpeg
 ```
 
 Debian / Ubuntu:
-
-``` bash
+```bash
 sudo apt install ffmpeg
 ```
 
 ### Termux cannot write to `/sdcard/Download/FaaDL`
+Run `termux-setup-storage` and grant permission.
 
-Run:
-
-``` bash
-termux-setup-storage
-```
-
-Grant the requested storage permission. Alternatively, choose a writable
-directory:
-
-``` bash
-export FDL_OUTPUT_DIR="$HOME/storage/downloads/FaaDL"
-```
-
-### `fdl: command not found`
-
-Check that the installation directory is in `PATH`.
-
-Termux:
-
-``` bash
-echo "$PATH"
-ls -l "$PREFIX/bin/fdl"
-hash -r
-```
-
-Linux:
-
-``` bash
-echo "$PATH"
-command -v fdl
-```
-
-## Notes
-
--   `fdl` is a command-line wrapper around yt-dlp; it does not host or
-    proxy media.
--   An internet connection is required for URL diagnostics and
-    downloads.
--   MP3 extraction requires ffmpeg.
--   Keep yt-dlp updated because website extractors can change.
--   Use the tool only for content you are authorized to download and in
-    accordance with the applicable platform terms and laws.
+---
 
 ## License
 
-Refer to the license declared by the parent **Faa-YDL** repository. If
-no license is present, all rights remain with the respective copyright
-holder.
+Refer to the license declared by the parent **Faa-YDL** repository. If no license is present, all rights remain with the respective copyright holder.
