@@ -2,10 +2,11 @@
 """fdl - Cross-platform CLI for Faa YTDownloader.
 
 Commands:
-    fdl --test [URL]   Diagnose Python, yt-dlp, ffmpeg and YouTube Innertube
-    fdl mp3 URL        Download audio as MP3 (192K)
-    fdl mp4 URL        Download video
-    fdl help           Show help
+    fdl --test [URL]              Diagnose Python, yt-dlp, ffmpeg and YouTube Innertube
+    fdl mp3 URL [--quality 192K]  Download audio as MP3 (default: 192K, options: 128K, 192K, 320K)
+    fdl mp4 URL [--quality best]  Download video (default: best, options: 1080p, 720p, best)
+    fdl playlist URL [mp3|mp4]    Download entire playlist or channel
+    fdl help                      Help menu
 
 Supported platforms: Windows, Linux and Termux.
 Optional output override: FDL_OUTPUT_DIR=/path/to/folder
@@ -34,7 +35,6 @@ IS_TERMUX = (
 if os.environ.get("FDL_OUTPUT_DIR"):
     OUTDIR = Path(os.path.expandvars(os.path.expanduser(os.environ["FDL_OUTPUT_DIR"])))
 elif IS_TERMUX:
-    # Requires `termux-setup-storage` for shared Download access.
     OUTDIR = Path("/sdcard/Download/FaaDL")
 else:
     OUTDIR = Path.home() / "Downloads" / "FaaDL"
@@ -78,13 +78,14 @@ def usage():
     print("Faa YTDownloader - universal CLI")
     print("\nUsage:")
     print("  fdl --test [URL]")
-    print("  fdl mp3 <URL>")
-    print("  fdl mp4 <URL>")
+    print("  fdl mp3 <URL> [--quality 192K]")
+    print("  fdl mp4 <URL> [--quality best]")
+    print("  fdl playlist <URL> [mp3|mp4] [--quality ...]")
     print("  fdl help")
     print("\nExamples:")
-    print("  fdl --test")
-    print("  fdl mp3 https://www.youtube.com/watch?v=Oreek8z0yxk")
-    print("  fdl mp4 https://youtu.be/Oreek8z0yxk")
+    print("  fdl mp3 https://www.youtube.com/watch?v=Oreek8z0yxk --quality 320K")
+    print("  fdl mp4 https://youtu.be/Oreek8z0yxk --quality 1080p")
+    print("  fdl playlist https://www.youtube.com/playlist?list=... mp3")
     print("\nOutput: " + str(OUTDIR))
     print("Override: FDL_OUTPUT_DIR=/custom/path")
 
@@ -186,7 +187,20 @@ def do_test(url=TEST_URL):
     return 0
 
 
-def do_dl(fmt, url):
+def parse_args_options(argv):
+    """Helper untuk memparsing argumen tambahan seperti --quality."""
+    quality = None
+    if "--quality" in argv:
+        try:
+            q_idx = argv.index("--quality")
+            if q_idx + 1 < len(argv):
+                quality = argv[q_idx + 1]
+        except ValueError:
+            pass
+    return quality
+
+
+def do_dl(fmt, url, is_playlist=False, quality=None):
     if not url:
         print("URL belum diberikan.")
         usage()
@@ -211,17 +225,36 @@ def do_dl(fmt, url):
         print("Atau set FDL_OUTPUT_DIR ke folder yang dapat ditulis.")
         return 1
 
-    args = ["--no-playlist", "--ignore-errors", "--extractor-args",
-            "youtube:player_client=android"]
+    args = ["--ignore-errors", "--extractor-args", "youtube:player_client=android"]
+
+    # Pengaturan Playlist
+    if not is_playlist:
+        args.append("--no-playlist")
+    else:
+        print("Mode Playlist/Channel diaktifkan.")
+
+    # Mencegah unduh file duplikat via download archive
+    archive_path = OUTDIR / ".downloaded_archive.txt"
+    args += ["--download-archive", str(archive_path)]
+
     if FFMPEG_PATH:
         args += ["--ffmpeg-location", FFMPEG_PATH]
+
+    # Pengaturan Format & Kualitas
     if fmt == "mp3":
         if not FFMPEG_PATH:
             print("WARNING: ffmpeg tidak ditemukan; konversi MP3 mungkin gagal.")
             print("Install: " + install_hint("ffmpeg"))
-        args += ["-x", "--audio-format", "mp3", "--audio-quality", "192K"]
+        audio_quality = quality if quality else "192K"
+        args += ["-x", "--audio-format", "mp3", "--audio-quality", audio_quality]
     else:
-        args += ["-f", "best"]
+        vid_quality = quality if quality else "best"
+        if vid_quality == "1080p":
+            args += ["-f", "bv*[height<=1080]+ba/b[height<=1080]"]
+        elif vid_quality == "720p":
+            args += ["-f", "bv*[height<=720]+ba/b[height<=720]"]
+        else:
+            args += ["-f", "best"]
 
     args += ["-o", str(OUTDIR / "%(title)s.%(ext)s"), url]
     command = YTDLP_CMD + args
@@ -246,13 +279,28 @@ def main(argv):
         usage()
         return 0
     command = argv[1].lower()
+    
     if command in ("--test", "test"):
-        return do_test(argv[2] if len(argv) > 2 else TEST_URL)
+        return do_test(argv[2] if len(argv) > 2 and not argv[2].startswith("-") else TEST_URL)
+    
     if command in ("mp3", "mp4"):
-        return do_dl(command, argv[2] if len(argv) > 2 else "")
+        url = argv[2] if len(argv) > 2 and not argv[2].startswith("-") else ""
+        quality = parse_args_options(argv)
+        return do_dl(command, url, is_playlist=False, quality=quality)
+    
+    if command == "playlist":
+        # fdl playlist <URL> [mp3|mp4] [--quality ...]
+        url = argv[2] if len(argv) > 2 and not argv[2].startswith("-") else ""
+        fmt = "mp4"
+        if len(argv) > 3 and argv[3].lower() in ("mp3", "mp4"):
+            fmt = argv[3].lower()
+        quality = parse_args_options(argv)
+        return do_dl(fmt, url, is_playlist=True, quality=quality)
+
     if command in ("help", "-h", "--help"):
         usage()
         return 0
+        
     print("Perintah tidak dikenal: %s" % argv[1])
     usage()
     return 1
