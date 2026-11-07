@@ -73,7 +73,7 @@ fdl2 -w {port}
 
 Installation:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/FaaRamadhann/Faa-YDL/refs/heads/main/FDL-CLI/install-fld2.sh | bash
+curl -fsSL https://raw.githubusercontent.com/FaaRamadhann/Faa-YDL/refs/heads/main/FDL-CLI/install-fdl2.sh | bash
 ```
 
 ---
