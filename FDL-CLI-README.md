@@ -62,7 +62,7 @@ or
 curl -fsSL https://raw.githubusercontent.com/FaaRamadhann/Faa-YDL/refs/heads/main/FDL-CLI/install.sh | bash
 ```
 
-FDL2 With Web Interface
+## FDL2 With Web Interface
 
 Usage:
 ```bash
