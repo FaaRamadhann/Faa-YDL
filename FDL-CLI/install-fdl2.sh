@@ -6,7 +6,7 @@ set -Eeuo pipefail
 # Faa YDL2 - FDL2 CLI Installer
 # ============================================================
 
-APP_NAME="fdl2"
+APP_NAME="fdl"
 REPO_URL="https://raw.githubusercontent.com/FaaRamadhann/Faa-YDL/refs/heads/main/FDL-CLI/fdl2"
 INSTALL_DIR="${HOME}/.local/bin"
 INSTALL_PATH="${INSTALL_DIR}/${APP_NAME}"
