@@ -66,9 +66,9 @@ curl -fsSL https://raw.githubusercontent.com/FaaRamadhann/Faa-YDL/refs/heads/mai
 
 Usage:
 ```bash
-fdl2 help
+fdl help
 or
-fdl2 -w {port}
+fdl -w {port}
 ```
 
 Installation:
